@@ -90,5 +90,148 @@ public class GeneralTable {
         } catch (SQLException e){
             System.out.println("No schedule from " + startLocation + " to " + destinationName + " on " + date);
         }
+    } //end displaySchedule method
+
+    public static void deleteTripOffering(Statement stmt){
+        Scanner in = new Scanner(System.in);
+        System.out.print("Trip#: ");
+        String tripNo = in.nextLine().trim();
+        System.out.print("Date");
+        String date = in.nextLine().trim();
+        System.out.print("ScheduledStartTime");
+        String sSt = in.nextLine().trim();
+        try
+        {
+            //if delete returns 0 that means no rows found matching that data so output an error
+            if(stmt.executeUpdate("DELETE TripOffering " +
+                    "WHERE TripNumber = '" + tripNo + "' AND " +
+                    "Date = '" + date + "' AND " +
+                    "ScheduledStartTime = '" + sSt + "'") == 0)
+            {
+                System.out.println("No Trip Offering with Trip Number: " + tripNo + " on " + date + " starting at " + sSt);
+            }
+            else
+                //if delete returns any other value, that means something was deleted
+                System.out.println("Successfully deleted Trip Offering");
+        }
+        catch (SQLException e)
+        {
+            //if some error occurs check input
+            System.out.println("No Trip Offering with Trip Number: " + tripNo + " on " + date + " starting at " + sSt);
+
+        }
+
+    } //end deleteTripOffering
+
+    public static void addTripOffering(Statement stmt){
+        Scanner in = new Scanner(System.in);
+        System.out.print("Enter trip number: ");
+        String tripNo = in.nextLine().trim();
+        System.out.print("Date: ");
+        String date = in.nextLine().trim();
+        System.out.print("Scheduled start time: ");
+        String sSt = in.nextLine().trim();
+        System.out.print("Scheduled arrival time: ");
+        String sAt = in.nextLine().trim();
+        System.out.print("Driver name: ");
+        String driverName = in.nextLine().trim();
+        System.out.print("BusID: ");
+        String busID = in.nextLine().trim();
+        try
+        {
+            stmt.execute("INSERT INTO TripOffering VALUES ('" + tripNo + "', '" + date + "', '" + sSt + "', '" + sAt + "', '" + driverName + "', '" + busID + "')");
+            System.out.print("Successfully added a new Trip Offering");
+        }
+        catch (SQLException e)
+        {
+            System.out.println("Check input formatting");
+        }
+    } // end addTripOffering
+
+    public static void changeDriver(Statement stmt){
+        Scanner in = new Scanner(System.in);
+        System.out.print("New driver name: ");
+        String driverN = in.nextLine().trim();
+        System.out.print("Trip no: ");
+        String tripNo = in.nextLine().trim();
+        System.out.print("Date: ");
+        String date = in.nextLine().trim();
+        System.out.print("ScheduledStartTime: ");
+        String sSt = in.nextLine().trim();
+
+        try{
+            if (stmt.executeUpdate("ALTER TABLE TripOffering "+
+                                    "SET DriverName '" +driverN+"' "+
+                                    "WHERE TripNo = " + tripNo + "AND " +
+                                    "Date = '" + date + "' AND" +
+                                    "ScheduledStartTime '" + sSt + "'") == 0)
+                System.out.println("No Trip Offering with Trip Number: " + tripNo + " on " + date + " starting at " + sSt);
+            else
+                System.out.println("updated Driver! ");
+        } catch (SQLException e)
+        {
+            System.out.println("No such Trip Offering or Driver in database");
+        }
+    } //end changeDriver
+
+    public static void changeBus(Statement stmt){
+        Scanner in = new Scanner(System.in);
+        System.out.print("Trip no: ");
+        String tripNo = in.nextLine().trim();
+        System.out.print("Date: ");
+        String date = in.nextLine().trim();
+        System.out.print("ScheduledStartTime: ");
+        String sSt = in.nextLine().trim();
+        try{
+            if(stmt.executeUpdate("ALTER TABLE TripOffering") == 0)
+            {//not done with executeUpdate method
+                System.out.print("");
+            }
+            System.out.println();
+        } catch (SQLException e)
+        {
+            System.out.println("Could not change the bus");
+        }
     }
-}
+
+    public static void displayTripStopInfo(Statement stmt) throws SQLException {
+        Scanner in = new Scanner(System.in);
+        System.out.print("Trip No: ");
+        String tripNo = in.nextLine().trim();
+        try{
+            ResultSet rs = stmt.executeQuery("SELECT * " +
+                                            "FROM TripStopInfo " +
+                                            "WHERE TripNumber = '" + tripNo + "' " +
+                                            "Order By SequenceNumber ");
+
+            //column names
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int colCount = rsmd.getColumnCount();
+            for(int i = 1; i <= colCount; i++)
+            {
+                System.out.print(rsmd.getColumnName(i) + "\t");
+            }
+
+            System.out.println();
+
+            //print out data
+            while(rs.next())
+            {
+                for(int i = 1; i <= colCount; i++)
+                    System.out.print(rs.getString(i) + "\t\t");
+                System.out.println();
+            }
+            rs.close();
+            System.out.println("------------------------------------------------------");
+        } catch (SQLException e)
+        {
+            System.out.println("Something went wrong");
+        }
+    } //end displayTripStopInfo
+
+    public static void weeklyScheduleDrivernDate(Statement stmt) throws SQLException{
+
+    }
+
+
+} //end GeneralTable class
