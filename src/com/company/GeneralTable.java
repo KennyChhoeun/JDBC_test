@@ -230,7 +230,11 @@ public class GeneralTable {
     } //end displayTripStopInfo
 
     public static void weeklyScheduleDrivernDate(Statement stmt) throws SQLException{
-
+        Scanner in = new Scanner(System.in);
+        System.out.print("Driver: ");
+        String driver = in.nextLine().trim();
+        System.out.print("Date: ");
+        String date = in.nextLine().trim();
     }
 
 
