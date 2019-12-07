@@ -235,7 +235,103 @@ public class GeneralTable {
         String driver = in.nextLine().trim();
         System.out.print("Date: ");
         String date = in.nextLine().trim();
+        try {
+            ResultSet rs = stmt.executeQuery("SELECT TripNumber, Date, ScheduledStartTime, ScheduledArrivalTime, BusID" +
+                                           "FROM TripOffering " +
+                                           "WHERE DriverName like '" + driver +
+                                            "' AND ' Date = '"+ date +
+                                            "'ORDER BY ScheduledStartTime ");
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int colCount = rsmd.getColumnCount();
+            while(rs.next())
+            {
+                for(int j = 1; j <= colCount; j++)
+                    System.out.print(rs.getString(j) + "\t\t");
+                System.out.println();
+            }
+            rs.close();
+
+        } catch(SQLException e)
+        {
+            System.out.println("Something went wrong");
+        }
+    } // end weeklyScheduleDrivernDate
+
+    public static void addDriver(Statement stmt) throws SQLException{
+        Scanner in = new Scanner(System.in);
+        System.out.println("New Driver Name: ");
+        String driverName = in.nextLine();
+        System.out.println("DriverPhoneNumber: ");
+        String date = in.nextLine();
+        try{
+            stmt.execute("INSERT INTO Driver VALUES('" + driverName + "' ," + date);
+        } catch (SQLException e)
+        {
+            System.out.print("An error occured");
+        }
     }
 
+    public static void addBus(Statement stmt) throws SQLException{
+        Scanner in = new Scanner(System.in);
+        System.out.print("Enter the new BusID");
+        String BusID = in.nextLine().trim();
+        System.out.println("Enter the Bus Model");
+        String Model = in.nextLine().trim();
+        System.out.println("Enter the year: ");
+        String Year = in.nextLine().trim();
 
+        try{
+            stmt.execute("INSERT INTO Bus VALUES('" + BusID + "' , " + Model + "', " + "'" + Year);
+            System.out.println("A new bus has been added");
+        } catch (SQLException e) {
+            System.out.println("An error has occured");
+        }
+    } // end addBus method
+
+    public static void deleteBus(Statement stmt) throws SQLException{
+        Scanner in = new Scanner(System.in);
+        System.out.println("Enter the bus number that you want to delete");
+        String BusID = in.nextLine();
+        try{
+            if(stmt.executeUpdate("DELETE Bus" +
+                           "WHERE BusID = '" + BusID) == 0)
+            {
+                System.out.println("No ");
+            }
+            else
+                System.out.println("Query updated!");
+        } catch (SQLException e)
+        {
+            System.out.println("An error occured");
+        }
+    } //end deleteBus
+
+    public static void insertTrip(Statement stmt) throws SQLException{
+        Scanner in = new Scanner(System.in);
+        System.out.print("Trip Number: ");
+        String tripNo = in.nextLine().trim();
+        System.out.print("Date: ");
+        String date = in.nextLine().trim();
+        System.out.print("Scheduled Start Time: ");
+        String startTime = in.nextLine().trim();
+        System.out.print("Stop Number: ");
+        String stop = in.nextLine().trim();
+        System.out.print("Scheduled Arrival Time: ");
+        String arrivalTime = in.nextLine().trim();
+        System.out.print("Actual Start Time: ");
+        String actualStartTime = in.nextLine().trim();
+        System.out.print("Actual Arrival Time: ");
+        String actualArrivalTime = in.nextLine().trim();
+        System.out.print("Passengers in: ");
+        String passengerIn = in.nextLine().trim();
+        System.out.print("Passengers out: ");
+        String passengerOut = in.nextLine().trim();
+
+        try{
+            stmt.execute("INSERT INTO ActualTripStopInfo VALUES ('" + tripNo + "', '" + date + "', '" + startTime + "', '" + stop + "', '" + arrivalTime
+                    + "', '" + actualStartTime + "', '" + actualArrivalTime + "', '" + passengerIn + "', '" + passengerOut + "')");
+        } catch(SQLException e) {
+            System.out.println("An error occured please check the syntax");
+        }
+    } //end insertTrip
 } //end GeneralTable class
