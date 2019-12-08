@@ -43,6 +43,34 @@ public class GeneralTable {
                     displaySchedule(stmt);
                     break;
                 case 2:
+                    deleteTripOffering(stmt);
+                    break;
+                case 3:
+                    addTripOffering(stmt);
+                    break;
+                case 4:
+                    changeDriver(stmt);
+                    break;
+                case 5:
+                    changeBus(stmt);
+                    break;
+                case 6:
+                    displayTripStopInfo(stmt);
+                    break;
+                case 7:
+                    weeklyScheduleDrivernDate(stmt);
+                    break;
+                case 8:
+                    addDriver(stmt);
+                    break;
+                case 9:
+                    addBus(stmt);
+                    break;
+                case 10:
+                    deleteBus(stmt);
+                    break;
+                case 11:
+                    insertTrip(stmt);
                     break;
             }
         } catch(Exception e) {
@@ -86,7 +114,8 @@ public class GeneralTable {
                 System.out.println();
             }
             rs.close();
-            System.out.println("----------------------------------------------------------------------------------------");
+            System.out.print("------------------------------------------------------------------------------------------------------");
+            System.out.println("-------------------");
         } catch (SQLException e){
             System.out.println("No schedule from " + startLocation + " to " + destinationName + " on " + date);
         }
@@ -96,19 +125,13 @@ public class GeneralTable {
         Scanner in = new Scanner(System.in);
         System.out.print("Trip#: ");
         String tripNo = in.nextLine().trim();
-        System.out.print("Date");
-        String date = in.nextLine().trim();
-        System.out.print("ScheduledStartTime");
-        String sSt = in.nextLine().trim();
         try
         {
             //if delete returns 0 that means no rows found matching that data so output an error
-            if(stmt.executeUpdate("DELETE TripOffering " +
-                    "WHERE TripNumber = '" + tripNo + "' AND " +
-                    "Date = '" + date + "' AND " +
-                    "ScheduledStartTime = '" + sSt + "'") == 0)
+            if(stmt.executeUpdate("DELETE FROM TripOffering " +
+                    "WHERE TripNumber = " + tripNo) == 0)
             {
-                System.out.println("No Trip Offering with Trip Number: " + tripNo + " on " + date + " starting at " + sSt);
+                System.out.println("No Trip Offering with Trip Number: " + tripNo);
             }
             else
                 //if delete returns any other value, that means something was deleted
@@ -117,7 +140,7 @@ public class GeneralTable {
         catch (SQLException e)
         {
             //if some error occurs check input
-            System.out.println("No Trip Offering with Trip Number: " + tripNo + " on " + date + " starting at " + sSt);
+            System.out.println("No Trip Offering with Trip Number: " + tripNo);
 
         }
 
@@ -160,11 +183,11 @@ public class GeneralTable {
         String sSt = in.nextLine().trim();
 
         try{
-            if (stmt.executeUpdate("ALTER TABLE TripOffering "+
-                                    "SET DriverName '" +driverN+"' "+
-                                    "WHERE TripNo = " + tripNo + "AND " +
-                                    "Date = '" + date + "' AND" +
-                                    "ScheduledStartTime '" + sSt + "'") == 0)
+            if (stmt.executeUpdate("UPDATE TripOffering "+
+                                    "SET DriverName = '" + driverN + "' " +
+                                    "WHERE TripNumber = " + tripNo + " AND " +
+                                    "Date = '" + date + "' AND " +
+                                    "ScheduledStartTime = '" + sSt + "'") == 0)
                 System.out.println("No Trip Offering with Trip Number: " + tripNo + " on " + date + " starting at " + sSt);
             else
                 System.out.println("updated Driver! ");
@@ -218,7 +241,7 @@ public class GeneralTable {
             while(rs.next())
             {
                 for(int i = 1; i <= colCount; i++)
-                    System.out.print(rs.getString(i) + "\t\t");
+                    System.out.print(rs.getString(i) + "\t\t\t\t");
                 System.out.println();
             }
             rs.close();
@@ -229,7 +252,7 @@ public class GeneralTable {
         }
     } //end displayTripStopInfo
 
-    public static void weeklyScheduleDrivernDate(Statement stmt) throws SQLException{
+    public static void weeklyScheduleDrivernDate(Statement stmt) throws SQLException{ //doesnt work
         Scanner in = new Scanner(System.in);
         System.out.print("Driver: ");
         String driver = in.nextLine().trim();
@@ -259,29 +282,29 @@ public class GeneralTable {
 
     public static void addDriver(Statement stmt) throws SQLException{
         Scanner in = new Scanner(System.in);
-        System.out.println("New Driver Name: ");
+        System.out.print("New Driver Name: ");
         String driverName = in.nextLine();
-        System.out.println("DriverPhoneNumber: ");
-        String date = in.nextLine();
+        System.out.print("DriverPhoneNumber: ");
+        String phoneN = in.nextLine();
         try{
-            stmt.execute("INSERT INTO Driver VALUES('" + driverName + "' ," + date);
+            stmt.execute("INSERT INTO Driver VALUES('" + driverName + "' , " + phoneN +")");
+            System.out.println("New driver added!");
         } catch (SQLException e)
         {
-            System.out.print("An error occured");
+            System.out.print("An error occurred");
         }
     }
 
     public static void addBus(Statement stmt) throws SQLException{
         Scanner in = new Scanner(System.in);
-        System.out.print("Enter the new BusID");
+        System.out.print("Enter the new BusID: ");
         String BusID = in.nextLine().trim();
-        System.out.println("Enter the Bus Model");
+        System.out.print("Enter the Bus Model: ");
         String Model = in.nextLine().trim();
-        System.out.println("Enter the year: ");
+        System.out.print("Enter the year: ");
         String Year = in.nextLine().trim();
-
         try{
-            stmt.execute("INSERT INTO Bus VALUES('" + BusID + "' , " + Model + "', " + "'" + Year);
+            stmt.execute("INSERT INTO Bus VALUES (" + BusID + ", '" + Model + "', '" + Year + "')");
             System.out.println("A new bus has been added");
         } catch (SQLException e) {
             System.out.println("An error has occured");
@@ -293,10 +316,10 @@ public class GeneralTable {
         System.out.println("Enter the bus number that you want to delete");
         String BusID = in.nextLine();
         try{
-            if(stmt.executeUpdate("DELETE Bus" +
-                           "WHERE BusID = '" + BusID) == 0)
+            if(stmt.executeUpdate("DELETE FROM Bus " +
+                           "WHERE BusID = " + BusID) == 0)
             {
-                System.out.println("No ");
+                System.out.println("The bus was not found or could not be deleted");
             }
             else
                 System.out.println("Query updated!");
@@ -328,10 +351,12 @@ public class GeneralTable {
         String passengerOut = in.nextLine().trim();
 
         try{
-            stmt.execute("INSERT INTO ActualTripStopInfo VALUES ('" + tripNo + "', '" + date + "', '" + startTime + "', '" + stop + "', '" + arrivalTime
-                    + "', '" + actualStartTime + "', '" + actualArrivalTime + "', '" + passengerIn + "', '" + passengerOut + "')");
+            stmt.execute("INSERT INTO ActualTripStopInfo VALUES (" + tripNo + ", '" + date + "', '" + startTime + "', " + stop + ", '" + arrivalTime
+                    + "', '" + actualStartTime + "', '" + actualArrivalTime + "', " + passengerIn + ", " + passengerOut + ")");
+            System.out.println("New Trip stop information added");
         } catch(SQLException e) {
-            System.out.println("An error occured please check the syntax");
+            System.out.println("An error occurred please check the syntax");
+
         }
     } //end insertTrip
 } //end GeneralTable class
