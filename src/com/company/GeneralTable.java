@@ -1,9 +1,8 @@
 package com.company;
-import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.Scanner;
 /* Java program that will present contents of any
- * table call with one parameter - table name
+ * table call and alter anything within the tables.
  * Author: Kenny Chhoeun
  * CS 4350: Database System
  */
@@ -99,7 +98,7 @@ public class GeneralTable {
                 System.out.print(rsmd.getColumnName(i) + "\t\t\t\t");
             }
             System.out.println();
-            System.out.print("------------------------------------------------------------------------------------------------------");
+            System.out.print("----------------------------------------------------------------------------------------------------");
             System.out.println("-------------------");
             //print out the data
             while(rs.next()){
@@ -118,7 +117,7 @@ public class GeneralTable {
 
     public static void deleteTripOffering(Statement stmt){
         Scanner in = new Scanner(System.in);
-        System.out.print("Trip#: ");
+        System.out.print("Trip Number: ");
         String tripNo = in.nextLine().trim();
         try
         {
@@ -370,4 +369,4 @@ public class GeneralTable {
 
         }
     } //end insertTrip
-} //end GeneralTable class
+} //end class
