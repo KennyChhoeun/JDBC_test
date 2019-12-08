@@ -10,13 +10,7 @@ import java.util.Scanner;
 public class GeneralTable {
 
     public static void main(String[] args) {
-	    if (args.length < 1) {
-	        System.out.println("table name data not provided");
-	        return;
-        }
-	    String tableName = args[0];
 	    String ps = "8991tnim";
-	    System.out.println("Showing Table: " + tableName);
 	    try{
 	        //load mysql
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -34,7 +28,7 @@ public class GeneralTable {
             System.out.println("9. Add a bus");
             System.out.println("10. Delete a bus");
             System.out.println("11. Insert data of trip specified by key");
-            System.out.println("\n\nPICK AN OPTION");
+            System.out.print("\n\nPICK AN OPTION: ");
 
             short choice = in.nextShort();
             Statement stmt = conn.createStatement();
@@ -84,7 +78,7 @@ public class GeneralTable {
         String startLocation = in.nextLine().trim();
         System.out.print("DestinationName: ");
         String destinationName = in.nextLine().trim();
-        System.out.println("Date: ");
+        System.out.print("Date: ");
         String date = in.nextLine().trim();
         //get table data
 
@@ -105,6 +99,8 @@ public class GeneralTable {
                 System.out.print(rsmd.getColumnName(i) + "\t\t\t\t");
             }
             System.out.println();
+            System.out.print("------------------------------------------------------------------------------------------------------");
+            System.out.println("-------------------");
             //print out the data
             while(rs.next()){
                 for(int i = 1; i<=colCount; i++)
@@ -114,8 +110,7 @@ public class GeneralTable {
                 System.out.println();
             }
             rs.close();
-            System.out.print("------------------------------------------------------------------------------------------------------");
-            System.out.println("-------------------");
+
         } catch (SQLException e){
             System.out.println("No schedule from " + startLocation + " to " + destinationName + " on " + date);
         }
@@ -167,7 +162,7 @@ public class GeneralTable {
         }
         catch (SQLException e)
         {
-            System.out.println("Check input formatting");
+            System.out.println("Check syntax formatting");
         }
     } // end addTripOffering
 
@@ -199,6 +194,8 @@ public class GeneralTable {
 
     public static void changeBus(Statement stmt){
         Scanner in = new Scanner(System.in);
+        System.out.print("New BusID: ");
+        String bus = in.nextLine().trim();
         System.out.print("Trip no: ");
         String tripNo = in.nextLine().trim();
         System.out.print("Date: ");
@@ -206,14 +203,18 @@ public class GeneralTable {
         System.out.print("ScheduledStartTime: ");
         String sSt = in.nextLine().trim();
         try{
-            if(stmt.executeUpdate("ALTER TABLE TripOffering") == 0)
-            {//not done with executeUpdate method
-                System.out.print("");
+            if(stmt.executeUpdate("UPDATE TripOffering " +
+                                "SET BusID = '" + bus + "' " +
+                                "WHERE TripNumber = '" + tripNo + "' AND " +
+                                "Date = '" + date + "' AND " +
+                                "ScheduledStartTime = '" + sSt + "'") == 0)
+            {
+                System.out.println("Successfully updated busID");
             }
             System.out.println();
         } catch (SQLException e)
         {
-            System.out.println("Could not change the bus");
+            System.out.println("Could not change the bus check syntax");
         }
     }
 
@@ -252,24 +253,34 @@ public class GeneralTable {
         }
     } //end displayTripStopInfo
 
-    public static void weeklyScheduleDrivernDate(Statement stmt) throws SQLException{ //doesnt work
+    public static void weeklyScheduleDrivernDate(Statement stmt) throws SQLException{ //needs column names
         Scanner in = new Scanner(System.in);
         System.out.print("Driver: ");
         String driver = in.nextLine().trim();
         System.out.print("Date: ");
         String date = in.nextLine().trim();
         try {
-            ResultSet rs = stmt.executeQuery("SELECT TripNumber, Date, ScheduledStartTime, ScheduledArrivalTime, BusID" +
-                                           "FROM TripOffering " +
-                                           "WHERE DriverName like '" + driver +
-                                            "' AND ' Date = '"+ date +
-                                            "'ORDER BY ScheduledStartTime ");
+            ResultSet rs = stmt.executeQuery("SELECT TripNumber, Date, ScheduledStartTime, ScheduledArrivalTime, BusID " +
+                    "FROM TripOffering " +
+                    "WHERE DriverName = '" + driver +
+                    "' AND Date = '"+ date +
+                    "' ORDER BY ScheduledStartTime ");
             ResultSetMetaData rsmd = rs.getMetaData();
             int colCount = rsmd.getColumnCount();
+            for(int i = 1; i <= colCount; i++)
+            {
+                System.out.print(rsmd.getColumnName(i) + "\t\t\t\t");
+            }
+            System.out.println();
+            System.out.print("--------------------------------");
+            System.out.print("--------------------------------");
+            System.out.print("--------------------------------");
+            System.out.println("----------------------");
+
             while(rs.next())
             {
                 for(int j = 1; j <= colCount; j++)
-                    System.out.print(rs.getString(j) + "\t\t");
+                    System.out.print("\t" + rs.getString(j) + "\t\t\t\t\t");
                 System.out.println();
             }
             rs.close();
