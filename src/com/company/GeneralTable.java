@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class GeneralTable {
 
     public static void main(String[] args) {
-	    String ps = "8991tnim";
+	    String ps = "password";
 	    try{
 	        //load mysql
             Class.forName("com.mysql.cj.jdbc.Driver");
